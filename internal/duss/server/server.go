@@ -43,9 +43,9 @@ func getSlug(h *Handler, c echo.Context) error {
 	var e error
 	if u, e = h.Store.FindBySlug(slug); e != nil {
 		log.Print(fmt.Sprintf("Error in getSlug for %s: %s", slug, e))
-		return c.String(http.StatusNotFound, slug)
+		return c.String(http.StatusNotFound, "Invalid Link")
 	}
-	return c.String(http.StatusOK, u.Original)
+	return c.Redirect(http.StatusMovedPermanently, u.Original)
 }
 
 
