@@ -1,0 +1,10 @@
+Environment: "development"
+ListenAddr: ':8080'
+BaseURL: 'http://localhost:8080'
+Mysql:
+  host: '127.0.0.1'
+  port: 3306
+  username: 'root'
+  password: ''
+  database: 'dass'
+  pool: 150
