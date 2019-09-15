@@ -7,6 +7,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"net/http"
+	"time"
 )
 
 type Handler struct {
