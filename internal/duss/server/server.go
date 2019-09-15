@@ -5,10 +5,8 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 
-	//"github.com/labstack/echo/middleware"
 	log "github.com/sirupsen/logrus"
 	"net/http"
-	"time"
 )
 
 type Handler struct {
@@ -33,7 +31,6 @@ func cutShort(c echo.Context) error {
 
 func getSlug(c echo.Context) error {
 	slug := c.Param("slug")
-	time.Sleep(time.Second * 5)
 	return c.String(http.StatusOK, slug)
 }
 
