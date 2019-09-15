@@ -24,8 +24,8 @@ func (h *Handler) SetHandlers() {
 	h.Router.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "DUSS ka dum!")
 	})
-	h.Router.GET("/:slug", func(c echo.Context) error {
-		return getSlug(h, c)
+	h.Router.GET("/:shortUrl", func(c echo.Context) error {
+		return getLongUrl(h, c)
 	})
 	//h.Router.GET("/:slug", getSlug)
 	h.Router.POST("/shorten", cutShort)
@@ -37,12 +37,12 @@ func cutShort(c echo.Context) error {
 	return c.String(http.StatusOK, url)
 }
 
-func getSlug(h *Handler, c echo.Context) error {
-	slug := c.Param("slug")
+func getLongUrl(h *Handler, c echo.Context) error {
+	shortUrl := c.Param("shortUrl")
 	var u *url.Url
 	var e error
-	if u, e = h.Store.FindBySlug(slug); e != nil {
-		log.Print(fmt.Sprintf("Error in getSlug for %s: %s", slug, e))
+	if u, e = h.Store.FindByShortUrl(shortUrl); e != nil {
+		log.Print(fmt.Sprintf("Error in getSlug for %s: %s", shortUrl, e))
 		return c.String(http.StatusNotFound, "Invalid Link")
 	}
 	return c.Redirect(http.StatusMovedPermanently, u.Original)

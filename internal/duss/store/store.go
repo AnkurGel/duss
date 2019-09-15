@@ -71,9 +71,13 @@ func InitStore() *Store {
 	return s
 }
 
-func (s *Store) FindBySlug(slug string) (*url.Url, error) {
+func (s *Store) CreateByLongUrl(longUrl string) (*url.Url, error) {
+	return nil, nil
+}
+
+func (s *Store) FindByShortUrl(shortUrl string) (*url.Url, error) {
 	url := url.Url{}
-	if result := s.Db.Where("short = ?", slug).First(&url); result.Error != nil{
+	if result := s.Db.Where("short = ?", shortUrl).First(&url); result.Error != nil{
 		return nil, result.Error
 	}
 	return &url, nil
