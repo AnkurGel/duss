@@ -18,12 +18,10 @@ func main() {
 	logger.InitLogger()
 	ReadConfigs()
 
-	//db := store.InitDB()
-	//defer db.Close()
 	s := store.InitStore()
 	defer s.Close()
 
-	h := server.InitServer()
+	h := server.InitServer(s)
 	h.SetHandlers()
 	go func() {
 		if err := h.Listen(viper.GetString("ListenAddr")); err != nil {

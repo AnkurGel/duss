@@ -12,7 +12,7 @@ import _ "github.com/go-sql-driver/mysql"
 
 type Store struct {
 	Dialect string
-	db *gorm.DB
+	Db      *gorm.DB
 }
 
 // GormLogger is a custom logger for Gorm, making it use logrus.
@@ -48,25 +48,33 @@ func (s *Store) GetDSN() string {
 
 func (s *Store) EstablishConnection() {
 	var err error
-	s.db, err = gorm.Open(s.Dialect, s.GetDSN())
+	s.Db, err = gorm.Open(s.Dialect, s.GetDSN())
 	if err != nil {
 		panic(fmt.Errorf("Failed to connect to DB: %s\n", err))
 	}
 }
 
 func (s *Store) SetupModels() {
-	s.db.AutoMigrate(&url.Url{})
+	s.Db.AutoMigrate(&url.Url{})
 }
 
 func (s *Store) Close() {
-	s.db.Close()
+	s.Db.Close()
 }
 
 func InitStore() *Store {
 	s := &Store{Dialect: "mysql"}
 	s.EstablishConnection()
 	defer log.Info("Store configured successfully")
-	s.db.SetLogger(&GormLogger{})
-	s.db.LogMode(true)
+	s.Db.SetLogger(&GormLogger{})
+	s.Db.LogMode(true)
 	return s
+}
+
+func (s *Store) FindBySlug(slug string) (*url.Url, error) {
+	url := url.Url{}
+	if result := s.Db.Where("short = ?", slug).First(&url); result.Error != nil{
+		return nil, result.Error
+	}
+	return &url, nil
 }

@@ -1,6 +1,8 @@
 package url
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 type Url struct {
 	gorm.Model
@@ -9,4 +11,3 @@ type Url struct {
 	Original string `gorm:"type:varchar(2048);index:orig"`
 	Visits uint
 }
-
