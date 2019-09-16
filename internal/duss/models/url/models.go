@@ -2,6 +2,7 @@ package url
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/spf13/viper"
 )
 
 type Url struct {
@@ -10,4 +11,9 @@ type Url struct {
 	//Short string `gorm:"unique;binary;not null"`
 	Original string `gorm:"type:varchar(2048);index:orig"`
 	Visits uint
+	Collisions uint
+}
+
+func (u *Url) ShortUrl() string {
+	return viper.GetString("BaseURL") +  u.Short
 }

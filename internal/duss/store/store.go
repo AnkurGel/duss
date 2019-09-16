@@ -2,8 +2,10 @@ package store
 
 import (
 	"fmt"
+	"github.com/ankurgel/duss/internal/duss/algo"
 	"github.com/ankurgel/duss/internal/duss/models/url"
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -40,9 +42,9 @@ func (s *Store) GetDSN() string {
 	config := viper.GetStringMapString("Mysql")
 	host, port, username, password, database := config["host"], config["port"], config["username"], config["password"], config["database"]
 	if viper.GetString("Environment") == "development" {
-		return fmt.Sprintf("%s:%s@/%s", username, password, database)
+		return fmt.Sprintf("%s:%s@/%s?parseTime=true", username, password, database)
 	} else {
-		return fmt.Sprintf("%s:%s@%s:%s/%s", username, password, host, port, database)
+		return fmt.Sprintf("%s:%s@%s:%s/%s?parseTime=true", username, password, host, port, database)
 	}
 }
 
@@ -68,17 +70,52 @@ func InitStore() *Store {
 	defer log.Info("Store configured successfully")
 	s.Db.SetLogger(&GormLogger{})
 	s.Db.LogMode(true)
+	s.SetupModels()
 	return s
 }
 
 func (s *Store) CreateByLongUrl(longUrl string) (*url.Url, error) {
-	return nil, nil
+	var u url.Url
+	var shortUrl *url.Url
+	var err error
+	if result := s.Db.Where("original = ?", longUrl).First(&u); result.Error != nil{
+		offset := 0
+		shortHash := algo.ComputeHash(longUrl, offset)
+
+		shortUrl, err = s.FindByShortUrl(shortHash)
+		// err will be nil if not found(happy), an object if found
+		log.Error("-->", err)
+		for err == nil && offset < 5 {
+			log.Error("--> -->", offset, err)
+			offset++
+			shortHash = algo.ComputeHash(longUrl, offset)
+			shortUrl, err = s.FindByShortUrl(shortHash)
+		}
+		if shortUrl == nil {
+			result := url.Url{
+				Short: shortHash,
+				Original: longUrl,
+				Collisions: uint(offset),
+			}
+			s.Db.Create(&result)
+			return &result, nil
+		} else {
+			return nil, errors.New("Couldn't shorten. Out of lives")
+		}
+
+	} else {
+		return &u, nil
+	}
+
+
+
+	return nil, errors.New("Cannot shorten. Out of lives.")
 }
 
 func (s *Store) FindByShortUrl(shortUrl string) (*url.Url, error) {
-	url := url.Url{}
-	if result := s.Db.Where("short = ?", shortUrl).First(&url); result.Error != nil{
+	var u url.Url
+	if result := s.Db.Where("short = ?", shortUrl).First(&u); result.Error != nil{
 		return nil, result.Error
 	}
-	return &url, nil
+	return &u, nil
 }
