@@ -10,3 +10,4 @@ Mysql:
   pool: 150
 BlockedHosts:
   "google.com"
+MaxCollisionsAllowed: 5

@@ -85,7 +85,7 @@ func (s *Store) CreateByLongUrl(longUrl string) (*url.Url, error) {
 		shortUrl, err = s.FindByShortUrl(shortHash)
 		// err will be nil if not found(happy), an object if found
 		log.Error("-->", err)
-		for err == nil && offset < 5 {
+		for err == nil && offset < viper.GetInt("MaxCollisionsAllowed") {
 			log.Error("--> -->", offset, err)
 			offset++
 			shortHash = algo.ComputeHash(longUrl, offset)
@@ -106,10 +106,6 @@ func (s *Store) CreateByLongUrl(longUrl string) (*url.Url, error) {
 	} else {
 		return &u, nil
 	}
-
-
-
-	return nil, errors.New("Cannot shorten. Out of lives.")
 }
 
 func (s *Store) FindByShortUrl(shortUrl string) (*url.Url, error) {
