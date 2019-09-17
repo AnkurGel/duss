@@ -92,13 +92,16 @@ func (s *Store) CreateByLongUrl(longUrl string) (*url.Url, error) {
 			shortUrl, err = s.FindByShortUrl(shortHash)
 		}
 		if shortUrl == nil {
-			result := url.Url{
+			short := url.Url{
 				Short: shortHash,
 				Original: longUrl,
 				Collisions: uint(offset),
 			}
-			s.Db.Create(&result)
-			return &result, nil
+			if result := s.Db.Create(&short); result.Error != nil {
+				return nil, errors.New("Couldn't shorten. Something went wrong.")
+			} else {
+				return &short, nil
+			}
 		} else {
 			return nil, errors.New("Couldn't shorten. Out of lives")
 		}
