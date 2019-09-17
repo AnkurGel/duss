@@ -8,8 +8,6 @@ import (
 	"strings"
 )
 
-var CharacterSet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-
 type UrlValidationError struct {
 	Reason string
 }
@@ -18,7 +16,7 @@ func (e *UrlValidationError) Error() string {
 	return fmt.Sprintf("UrlValidationError: %s", e.Reason)
 }
 
-// This functino will iteratively improve
+// This function will iteratively improve
 func NormalizeUrl(str string) (string, error) {
 	strings.Replace(str, " ", "", -1)
 	if len(str) < 4 || len(str) > 2048 {
@@ -36,7 +34,6 @@ func NormalizeUrl(str string) (string, error) {
 
 	return normalize, nil
 }
-
 
 func ComputeHash(str string, offset int) string {
 	sha := sha1.Sum([]byte(str))

@@ -25,10 +25,11 @@ func (h *Handler) SetHandlers() {
 	h.Router.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "DUSS ka dum!")
 	})
+
 	h.Router.GET("/:shortUrl", func(c echo.Context) error {
 		return getLongUrl(h, c)
 	})
-	//h.Router.GET("/:slug", getSlug)
+
 	h.Router.POST("/shorten", func(c echo.Context) error {
 		return cutShort(h, c)
 	})
