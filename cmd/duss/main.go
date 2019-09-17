@@ -38,12 +38,16 @@ func main() {
 
 
 func ReadConfigs() {
+	viper.AutomaticEnv()
+	configPath := viper.GetString("DUSS_CONFIG_PATH")
+	if configPath == "" {
+		configPath = "./configs"
+	}
 	viper.SetConfigName("config")
-	viper.AddConfigPath("./configs")
-
-	if err := viper.ReadInConfig(); err != nil {
+	viper.AddConfigPath(configPath)
+		if err := viper.ReadInConfig(); err != nil {
 		log.Error(err)
 		panic(fmt.Errorf("Error in ReadConfigs(): %s\n", err))
 	}
-	log.Info("Configuration set successfully")
+	log.Info(viper.GetString("Environment"), " configuration set successfully")
 }
