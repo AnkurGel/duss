@@ -36,17 +36,16 @@ func (h *Handler) SetHandlers() {
 }
 
 func cutShort(h *Handler, c echo.Context) error {
-
-	//custom := c.FormValue("custom")
 	var u string
 	var e error
+	custom := c.FormValue("custom")
 	// TODO: move this in CreateByLongUrl
 	if u, e = algo.NormalizeUrl(c.FormValue("url")); e != nil {
 		errorMessage := fmt.Sprintf("Error in URL for %s: %s", c.FormValue("url"), e)
 		log.Error(errorMessage)
 		return c.String(http.StatusUnprocessableEntity, errorMessage)
 	}
-	if result, e := h.Store.CreateByLongUrl(u); e != nil {
+	if result, e := h.Store.CreateByLongUrl(u, custom); e != nil {
 		errorMessage := fmt.Sprintf("Error in shortening for %s: %s", c.FormValue("url"), e)
 		log.Error(errorMessage)
 		return c.String(http.StatusUnprocessableEntity, errorMessage)

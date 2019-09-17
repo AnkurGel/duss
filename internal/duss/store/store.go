@@ -74,13 +74,18 @@ func InitStore() *Store {
 	return s
 }
 
-func (s *Store) CreateByLongUrl(longUrl string) (*url.Url, error) {
+func (s *Store) CreateByLongUrl(longUrl string, custom string) (*url.Url, error) {
 	var u url.Url
 	var shortUrl *url.Url
 	var err error
+	var shortHash string
 	if result := s.Db.Where("original = ?", longUrl).First(&u); result.Error != nil{
 		offset := 0
-		shortHash := algo.ComputeHash(longUrl, offset)
+		if len(custom) > 0 {
+			shortHash = custom
+		} else {
+			shortHash = algo.ComputeHash(longUrl, offset)
+		}
 
 		shortUrl, err = s.FindByShortUrl(shortHash)
 		// err will be nil if not found(happy), an object if found

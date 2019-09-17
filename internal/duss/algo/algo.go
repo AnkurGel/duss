@@ -31,7 +31,6 @@ func NormalizeUrl(str string) (string, error) {
 	if err != nil {
 		return "", &UrlValidationError{"Cannot normalize URL"}
 	}
-
 	return normalize, nil
 }
 
