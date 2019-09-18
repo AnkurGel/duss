@@ -44,13 +44,13 @@ func ReadConfigs() {
 	viper.AutomaticEnv()
 	viper.SetConfigType("yaml")
 
-	var configBox = packr.New("Configs", "./configs")
+	var configBox = packr.New("Configs", "../../configs")
 	var configFilePath = viper.GetString("DUSS_CONFIG_PATH")
 
 	var yamlContent []byte
 	var err error
 	if configFilePath == "" {
-		configFilePath = "./config.yaml"
+		configFilePath = "config.yaml"
 		yamlContent, err = configBox.Find(configFilePath)
 	} else {
 		yamlContent, err = ioutil.ReadFile(configFilePath)
