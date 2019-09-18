@@ -44,3 +44,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/lytics/base62"
+
+[[constraint]]
+  name = "github.com/gobuffalo/packr"
+  version = "2.6.0"

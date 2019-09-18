@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/ankurgel/duss/internal/duss/logger"
 	"github.com/ankurgel/duss/internal/duss/server"
 	"github.com/ankurgel/duss/internal/duss/store"
+	"github.com/gobuffalo/packr/v2"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"io/ioutil"
 	"os"
 	"os/signal"
 )
@@ -39,13 +42,26 @@ func main() {
 
 func ReadConfigs() {
 	viper.AutomaticEnv()
-	configPath := viper.GetString("DUSS_CONFIG_PATH")
-	if configPath == "" {
-		configPath = "./configs"
+	viper.SetConfigType("yaml")
+
+	var configBox = packr.New("Configs", "./configs")
+	var configFilePath = viper.GetString("DUSS_CONFIG_PATH")
+
+	var yamlContent []byte
+	var err error
+	if configFilePath == "" {
+		configFilePath = "./config.yaml"
+		yamlContent, err = configBox.Find(configFilePath)
+	} else {
+		yamlContent, err = ioutil.ReadFile(configFilePath)
 	}
-	viper.SetConfigName("config")
-	viper.AddConfigPath(configPath)
-		if err := viper.ReadInConfig(); err != nil {
+
+	if err != nil {
+		log.Error(err)
+		panic(fmt.Errorf("Error in Parsing Configration(): %s\n", err))
+	}
+
+	if err = viper.ReadConfig(bytes.NewBuffer(yamlContent)); err != nil {
 		log.Error(err)
 		panic(fmt.Errorf("Error in ReadConfigs(): %s\n", err))
 	}

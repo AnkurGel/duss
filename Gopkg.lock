@@ -42,6 +42,51 @@
   version = "v1.4.1"
 
 [[projects]]
+  digest = "1:d96df3666b8c63ed64ddd08bc03a4df20d7f26c7628d934b62e789be51291410"
+  name = "github.com/gobuffalo/envy"
+  packages = ["."]
+  pruneopts = ""
+  revision = "909ea676d4c90832fefbf55a5a4fb04d8bef8931"
+  version = "v1.7.1"
+
+[[projects]]
+  digest = "1:6c9088827dcc7a807c97592a55f190e35e0fdaf237c5a074256c260925c59428"
+  name = "github.com/gobuffalo/logger"
+  packages = ["."]
+  pruneopts = ""
+  revision = "7c291b53e05b81d77bd43109b4a3c6f84e45c8e1"
+  version = "v1.0.1"
+
+[[projects]]
+  digest = "1:776121711fe0f7161477e467e1f18b130b7bcaf6db408ed7f2077468c1a08ba4"
+  name = "github.com/gobuffalo/packd"
+  packages = [
+    ".",
+    "internal/takeon/github.com/markbates/errx",
+  ]
+  pruneopts = ""
+  revision = "54ea459691466cfb630ccc276723fe3963f3e9d5"
+  version = "v0.3.0"
+
+[[projects]]
+  digest = "1:9daf63eb64a9df89273588b9d4131b4a03ab1e557b4a2a5af2b24a430eace516"
+  name = "github.com/gobuffalo/packr"
+  packages = [
+    "v2",
+    "v2/file",
+    "v2/file/resolver",
+    "v2/file/resolver/encoding/hex",
+    "v2/internal/takeon/github.com/markbates/errx",
+    "v2/internal/takeon/github.com/markbates/oncer",
+    "v2/internal/takeon/github.com/markbates/safe",
+    "v2/jam/parser",
+    "v2/plog",
+  ]
+  pruneopts = ""
+  revision = "b6d537d853119bfd3a31fe49edf53418ce3a00e9"
+  version = "v2.6.0"
+
+[[projects]]
   digest = "1:8d08c01e00944c239925f20ebc212c197209f0317302195cff12e364789e56dc"
   name = "github.com/goware/urlx"
   packages = ["."]
@@ -83,6 +128,22 @@
   pruneopts = ""
   revision = "f5c5f50e6090ae76a29240b61ae2a90dd810112e"
   version = "v1.0.0"
+
+[[projects]]
+  digest = "1:7df5a9695a743c3e1626b28bb8741602c8c15527e1efaeaec48ab2ff9a23f74c"
+  name = "github.com/joho/godotenv"
+  packages = ["."]
+  pruneopts = ""
+  revision = "23d116af351c84513e1946b527c88823e476be13"
+  version = "v1.3.0"
+
+[[projects]]
+  digest = "1:d5f5edf20f2539c95c3cc0208def77b52e7e87771dc027be073163621a1b1048"
+  name = "github.com/karrick/godirwalk"
+  packages = ["."]
+  pruneopts = ""
+  revision = "73c17a9b9528eb3ce857b782a2816c0cda581e62"
+  version = "v1.10.12"
 
 [[projects]]
   digest = "1:0f51cee70b0d254dbc93c22666ea2abf211af81c1701a96d04e2284b408621db"
@@ -165,6 +226,26 @@
   version = "v1.4.0"
 
 [[projects]]
+  digest = "1:1d7e1867c49a6dd9856598ef7c3123604ea3daabf5b83f303ff457bcbc410b1d"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = ""
+  revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
+  version = "v0.8.1"
+
+[[projects]]
+  digest = "1:496fff31a7adae9f66d9551c6fc541befe78dfb3181da68e818e705543008df0"
+  name = "github.com/rogpeppe/go-internal"
+  packages = [
+    "modfile",
+    "module",
+    "semver",
+  ]
+  pruneopts = ""
+  revision = "18d060b6b4f28350cb92f79d63b2f558e634dcea"
+  version = "v1.3.2"
+
+[[projects]]
   digest = "1:1a405cddcf3368445051fb70ab465ae99da56ad7be8d8ca7fc52159d1c2d873c"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
@@ -238,6 +319,7 @@
   packages = [
     "acme",
     "acme/autocert",
+    "ssh/terminal",
   ]
   pruneopts = ""
   revision = "227b76d455e791cb042b03e633e2f7fbcfdf74a5"
@@ -254,7 +336,10 @@
   branch = "master"
   digest = "1:9ca8dc3cd9b14099c141cc54e60e703cf5ccf2fd21fd040ba09287082cd88b07"
   name = "golang.org/x/sys"
-  packages = ["unix"]
+  packages = [
+    "unix",
+    "windows",
+  ]
   pruneopts = ""
   revision = "c3b328c6e5a763a2bfc82a48b4bd855037210934"
 
@@ -305,11 +390,13 @@
   analyzer-version = 1
   input-imports = [
     "github.com/go-sql-driver/mysql",
+    "github.com/gobuffalo/packr/v2",
     "github.com/goware/urlx",
     "github.com/jinzhu/gorm",
     "github.com/labstack/echo",
     "github.com/labstack/echo/middleware",
     "github.com/lytics/base62",
+    "github.com/pkg/errors",
     "github.com/sirupsen/logrus",
     "github.com/spf13/viper",
   ]
