@@ -1,7 +1,7 @@
 ## Installation:
 * Install Golang 1.10+
 * Install MySql
-* Setup `GOPATH`
+* Setup `GOPATH`, `GOBIN` path variables
 * Install [Dep](https://github.com/golang/dep) to manage dependencies
 * `go get -u github.com/ankurgel/duss`
 * `cd $GOPATH/src/github.com/ankurgel/duss`
