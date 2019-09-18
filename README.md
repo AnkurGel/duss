@@ -22,7 +22,7 @@ Run right binary with the configuration file [example](https://github.com/AnkurG
 * `go run cmd/duss/main.go`
 
 ## Roadmap
-[ ] - Domain blacklisting
-[ ] - Handle redirects and loops
-[ ] - Handle expiry of redirect
-[ ] - Support other data stores - Bolt, Redis
+[ ] - Domain blacklisting   
+[ ] - Handle redirects and loops   
+[ ] - Handle expiry of redirect   
+[ ] - Support other data stores - Bolt, Redis   
