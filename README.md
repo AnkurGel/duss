@@ -1,3 +1,6 @@
+A URL shortener written in GoLang. Works with any SQL variant.   
+Supports configuration of key length, url normalization, collisions handling etc 
+
 ## Installation
 * Install Golang 1.10+
 * Install MySql
@@ -18,3 +21,8 @@ Run right binary with the configuration file [example](https://github.com/AnkurG
 * Create relevant database
 * `go run cmd/duss/main.go`
 
+## Roadmap
+[ ] - Domain blacklisting
+[ ] - Handle redirects and loops
+[ ] - Handle expiry of redirect
+[ ] - Support other data stores - Bolt, Redis
