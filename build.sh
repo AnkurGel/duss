@@ -1,4 +1,5 @@
 #!/bin/bash
+export PATH="$PATH:$GOBIN"
 cd $GOPATH/src/github.com/ankurgel/duss
 echo "Installing build dependencies..."
 go get -v github.com/mitchellh/gox
