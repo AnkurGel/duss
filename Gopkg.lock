@@ -391,7 +391,6 @@
   input-imports = [
     "github.com/go-sql-driver/mysql",
     "github.com/gobuffalo/packr/v2",
-    "github.com/gobuffalo/packr/v2/file/resolver",
     "github.com/goware/urlx",
     "github.com/jinzhu/gorm",
     "github.com/labstack/echo",

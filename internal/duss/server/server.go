@@ -50,7 +50,7 @@ func cutShort(h *Handler, c echo.Context) error {
 		log.Error(errorMessage)
 		return c.String(http.StatusUnprocessableEntity, errorMessage)
 	} else {
-		c.String(http.StatusCreated, result.ShortUrl())
+		return c.String(http.StatusCreated, result.ShortUrl())
 	}
 	return c.String(http.StatusOK, u)
 }

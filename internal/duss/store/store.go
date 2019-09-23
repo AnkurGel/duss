@@ -40,11 +40,11 @@ func (*GormLogger) Print(v ...interface{}) {
 
 func (s *Store) GetDSN() string {
 	config := viper.GetStringMapString("Mysql")
-	host, port, username, password, database := config["host"], config["port"], config["username"], config["password"], config["database"]
+	host, username, password, database := config["host"], config["username"], config["password"], config["database"]
 	if viper.GetString("Environment") == "development" {
 		return fmt.Sprintf("%s:%s@/%s?parseTime=true", username, password, database)
 	} else {
-		return fmt.Sprintf("%s:%s@%s:%s/%s?parseTime=true", username, password, host, port, database)
+		return fmt.Sprintf("%s:%s@(%s)/%s?parseTime=true", username, password, host, database)
 	}
 }
 
