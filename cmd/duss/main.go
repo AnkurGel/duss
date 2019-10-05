@@ -19,7 +19,7 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	logger.InitLogger()
-	ReadConfigs()
+	readConfigs()
 
 	s := store.InitStore()
 	defer s.Close()
@@ -40,7 +40,7 @@ func main() {
 }
 
 
-func ReadConfigs() {
+func readConfigs() {
 	viper.AutomaticEnv()
 	viper.SetConfigType("yaml")
 
@@ -58,12 +58,12 @@ func ReadConfigs() {
 
 	if err != nil {
 		log.Error(err)
-		panic(fmt.Errorf("Error in Parsing Configration(): %s\n", err))
+		panic(fmt.Errorf("error in Parsing Configration(): %s", err))
 	}
 
 	if err = viper.ReadConfig(bytes.NewBuffer(yamlContent)); err != nil {
 		log.Error(err)
-		panic(fmt.Errorf("Error in ReadConfigs(): %s\n", err))
+		panic(fmt.Errorf("error in ReadConfigs(): %s", err))
 	}
 	log.Info(viper.GetString("Environment"), " configuration set successfully")
 }
