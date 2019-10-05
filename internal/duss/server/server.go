@@ -40,7 +40,7 @@ func cutShort(h *Handler, c echo.Context) error {
 	var e error
 	custom := c.FormValue("custom")
 	// TODO: move this in CreateByLongUrl
-	if u, e = algo.NormalizeUrl(c.FormValue("url")); e != nil {
+	if u, e = algo.NormalizeURL(c.FormValue("url")); e != nil {
 		errorMessage := fmt.Sprintf("Error in URL for %s: %s", c.FormValue("url"), e)
 		log.Error(errorMessage)
 		return c.String(http.StatusUnprocessableEntity, errorMessage)
