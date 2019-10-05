@@ -1,3 +1,4 @@
+// Package store interacts with the SQL dialect and does data modeling
 package store
 
 import (
@@ -10,8 +11,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-import _ "github.com/go-sql-driver/mysql"
+// TODO: generalize to work for any dialect. Pick it from config
+import _ "github.com/go-sql-driver/mysql" // This blank import is needed for gorm dialect to work
 
+// Store represent a SQL binding for an adapter
 type Store struct {
 	Dialect string
 	Db      *gorm.DB
@@ -38,32 +41,37 @@ func (*GormLogger) Print(v ...interface{}) {
 	}
 }
 
+// GetDSN returns Data Source Name for sql configuration
 func (s *Store) GetDSN() string {
 	config := viper.GetStringMapString("Mysql")
 	host, username, password, database := config["host"], config["username"], config["password"], config["database"]
 	if viper.GetString("Environment") == "development" {
 		return fmt.Sprintf("%s:%s@/%s?parseTime=true", username, password, database)
-	} else {
-		return fmt.Sprintf("%s:%s@(%s)/%s?parseTime=true", username, password, host, database)
 	}
+	return fmt.Sprintf("%s:%s@(%s)/%s?parseTime=true", username, password, host, database)
 }
 
+// EstablishConnection establishes connection of store with sql server
 func (s *Store) EstablishConnection() {
 	var err error
 	s.Db, err = gorm.Open(s.Dialect, s.GetDSN())
 	if err != nil {
-		panic(fmt.Errorf("Failed to connect to DB: %s\n", err))
+		panic(fmt.Errorf("failed to connect to DB: %s", err))
 	}
 }
 
+// SetupModels setups and migrates all the models
 func (s *Store) SetupModels() {
-	s.Db.AutoMigrate(&url.Url{})
+	s.Db.AutoMigrate(&url.URL{})
 }
 
+// Close gracefully closes the store
 func (s *Store) Close() {
 	s.Db.Close()
 }
 
+// InitStore configures the store for connection, models,
+// logging etc and returns instantiated store
 func InitStore() *Store {
 	s := &Store{Dialect: "mysql"}
 	s.EstablishConnection()
@@ -74,51 +82,52 @@ func InitStore() *Store {
 	return s
 }
 
-func (s *Store) CreateByLongUrl(longUrl string, custom string) (*url.Url, error) {
-	var u url.Url
-	var shortUrl *url.Url
+// CreateByLongURL interacts with database to create short URL
+// and returns URL object or error
+func (s *Store) CreateByLongURL(longURL string, custom string) (*url.URL, error) {
+	var u url.URL
+	var shortURL *url.URL
 	var err error
 	var shortHash string
-	if result := s.Db.Where("original = ?", longUrl).First(&u); result.Error != nil{
+	if result := s.Db.Where("original = ?", longURL).First(&u); result.Error != nil{
 		offset := 0
 		if len(custom) > 0 {
 			shortHash = custom
 		} else {
-			shortHash = algo.ComputeHash(longUrl, offset)
+			shortHash = algo.ComputeHash(longURL, offset)
 		}
 
-		shortUrl, err = s.FindByShortUrl(shortHash)
+		shortURL, err = s.FindByShortURL(shortHash)
 		// err will be nil if not found(happy), an object if found
 		log.Error("-->", err)
 		for err == nil && offset < viper.GetInt("MaxCollisionsAllowed") {
 			log.Error("--> -->", offset, err)
 			offset++
-			shortHash = algo.ComputeHash(longUrl, offset)
-			shortUrl, err = s.FindByShortUrl(shortHash)
+			shortHash = algo.ComputeHash(longURL, offset)
+			shortURL, err = s.FindByShortURL(shortHash)
 		}
-		if shortUrl == nil {
-			short := url.Url{
-				Short: shortHash,
-				Original: longUrl,
+		if shortURL == nil {
+			short := url.URL{
+				Short:      shortHash,
+				Original:   longURL,
 				Collisions: uint(offset),
 			}
 			if result := s.Db.Create(&short); result.Error != nil {
-				return nil, errors.New("Couldn't shorten. Something went wrong.")
-			} else {
-				return &short, nil
+				return nil, errors.New("couldn't shorten. Something went wrong")
 			}
-		} else {
-			return nil, errors.New("Couldn't shorten. Out of lives")
+			return &short, nil
 		}
+		return nil, errors.New("couldn't shorten. Out of lives")
 
-	} else {
-		return &u, nil
 	}
+	return &u, nil
 }
 
-func (s *Store) FindByShortUrl(shortUrl string) (*url.Url, error) {
-	var u url.Url
-	if result := s.Db.Where("short = ?", shortUrl).First(&u); result.Error != nil{
+// FindByShortURL looks-up the store for given short url
+// and returns URL object or error
+func (s *Store) FindByShortURL(shortURL string) (*url.URL, error) {
+	var u url.URL
+	if result := s.Db.Where("short = ?", shortURL).First(&u); result.Error != nil{
 		return nil, result.Error
 	}
 	return &u, nil
