@@ -10,7 +10,7 @@ import (
 	"github.com/ankurgel/duss/internal/duss/store"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-
+	"github.com/ankurgel/duss/internal/duss/models/auth"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"time"
@@ -70,6 +70,23 @@ func getLongURL(h *Handler, c echo.Context) error {
 		return c.String(http.StatusNotFound, "Invalid Link")
 	}
 	return c.Redirect(http.StatusMovedPermanently, u.Original)
+}
+
+
+func createNewUser(h *Handler, c echo.Context) error {
+	newUser := &auth.User{}
+	newUser.Email = c.FormValue("email_id")
+	newUser.Password = c.FormValue("password")
+	newUser.Name = c.FormValue("name")
+	var token string
+	var e error
+	if token, e = h.Store.CreateUser(newUser); e != nil {
+		log.Error(fmt.Sprintf("Error in Create user for %s: %s", newUser.Email, e))
+		return c.String(http.StatusNotFound, "Invalid Link")
+	}
+	newUser.Password = ""
+	newUser.Token = token
+	return c.JSON(http.StatusCreated, newUser)
 }
 
 
