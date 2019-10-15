@@ -7,6 +7,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
+// AuthenticateUser is a middleware to authenticate user
 func (h *Handler) AuthenticateUser(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		if skipTokenAuth(c) {
@@ -25,6 +26,7 @@ func (h *Handler) AuthenticateUser(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
+// GetAuthUser returns the Autherized user from token
 func GetAuthUser(h *Handler, c echo.Context) (*auth.User, error){
 	user := c.Get("user").(*jwt.Token)
 	authToken := user.Claims.(*auth.Token)
@@ -35,6 +37,7 @@ func GetAuthUser(h *Handler, c echo.Context) (*auth.User, error){
 	return authUser, nil
 }
 
+// skipTokenAuth is use to add paths to skip Token auth check
 func skipTokenAuth(c echo.Context) bool {
 	if c.Path() != "/shorten" && !strings.Contains(c.Path(), "/admin"){
 		return true
@@ -42,6 +45,7 @@ func skipTokenAuth(c echo.Context) bool {
 	return false
 }
 
+// VerifyAdmin is a middleware verify the admin role of the authenticate user
 func (h *Handler) VerifyAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user, err := GetAuthUser(h, c)
@@ -49,7 +53,7 @@ func (h *Handler) VerifyAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 			c.Error(echo.ErrValidatorNotRegistered)
 			return nil
 		}
-		if user.Admin != 1 {
+		if !user.IsAdmin() {
 			c.Error(echo.ErrUnauthorized)
 			return nil
 		}
