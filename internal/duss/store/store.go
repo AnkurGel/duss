@@ -65,6 +65,7 @@ func (s *Store) EstablishConnection() {
 // SetupModels setups and migrates all the models
 func (s *Store) SetupModels() {
 	s.Db.AutoMigrate(&url.URL{})
+	s.Db.AutoMigrate(&auth.User{})
 }
 
 // Close gracefully closes the store
@@ -151,4 +152,10 @@ func (s *Store) CreateUser(user *auth.User) (string, error) {
 		return "", createdUser.Error
 	}
 	return token, err
+}
+
+func (s *Store) GetUserFromToken(token *auth.Token) (*auth.User, error) {
+	user := &auth.User{}
+	err := s.Db.Where("Email = ? AND Name = ?", token.Email, token.Name).First(user).Error
+	return user, err
 }

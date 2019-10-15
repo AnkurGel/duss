@@ -11,6 +11,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/ankurgel/duss/internal/duss/models/auth"
+	"github.com/spf13/viper"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"time"
@@ -27,6 +28,13 @@ type Handler struct {
 
 // SetHandlers defines the routes and verb allowed in application
 func (h *Handler) SetHandlers() {
+	h.Router.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+		Claims:     &auth.Token{},
+		SigningKey: []byte(viper.GetString("JwtSecret")),
+		Skipper: skipTokenAuth,
+	}))
+
+	h.Router.Use(h.AuthenticateUser)
 	h.Router.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "DUSS ka dum!")
 	})
@@ -62,7 +70,7 @@ func cutShort(h *Handler, c echo.Context) error {
 
 // getLongURL responds with original long URL redirect for a given short slug
 func getLongURL(h *Handler, c echo.Context) error {
-	shortURL := c.Param("shortURL")
+	shortURL := c.Param("shortUrl")
 	var u *url.URL
 	var e error
 	if u, e = h.Store.FindByShortURL(shortURL); e != nil {

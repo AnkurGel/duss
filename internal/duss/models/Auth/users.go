@@ -3,6 +3,7 @@ package auth
 import (
 	"github.com/jinzhu/gorm"
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/spf13/viper"
 	"time"
 )
 
@@ -30,6 +31,6 @@ func (u *User) CreateApiToken() (tokenString string, err error){
 		},
 	}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
-	tokenString, err = token.SignedString([]byte("secret"))
+	tokenString, err = token.SignedString([]byte(viper.GetString("JwtSecret")))
 	return
 }
