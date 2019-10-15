@@ -46,6 +46,13 @@ func (h *Handler) SetHandlers() {
 	h.Router.POST("/shorten", func(c echo.Context) error {
 		return cutShort(h, c)
 	})
+
+	adminGroup := h.Router.Group("/admin")
+	adminGroup.Use(h.VerifyAdmin)
+	
+	adminGroup.POST("/admin/user/new", func(c echo.Context) error {
+		return createNewUser(h, c)
+	})
 }
 
 // cutShort responds with shortened URL or gives 422 if can't be processed

@@ -41,3 +41,18 @@ func skipTokenAuth(c echo.Context) bool {
 	}
 	return false
 }
+
+func (h *Handler) VerifyAdmin(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		user, err := GetAuthUser(h, c)
+		if err != nil {
+			c.Error(echo.ErrValidatorNotRegistered)
+			return nil
+		}
+		if user.Admin != 1 {
+			c.Error(echo.ErrUnauthorized)
+			return nil
+		}
+		return next(c)
+	}
+}
