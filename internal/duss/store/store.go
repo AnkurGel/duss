@@ -3,12 +3,14 @@ package store
 
 import (
 	"fmt"
+	"errors"
 	"github.com/ankurgel/duss/internal/duss/algo"
 	"github.com/ankurgel/duss/internal/duss/models/url"
+	"github.com/ankurgel/duss/internal/duss/models/auth"
 	"github.com/jinzhu/gorm"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // TODO: generalize to work for any dialect. Pick it from config
@@ -63,6 +65,7 @@ func (s *Store) EstablishConnection() {
 // SetupModels setups and migrates all the models
 func (s *Store) SetupModels() {
 	s.Db.AutoMigrate(&url.URL{})
+	s.Db.AutoMigrate(&auth.User{})
 }
 
 // Close gracefully closes the store
@@ -131,4 +134,30 @@ func (s *Store) FindByShortURL(shortURL string) (*url.URL, error) {
 		return nil, result.Error
 	}
 	return &u, nil
+}
+
+// CreateUser interacts with database to create a User
+func (s *Store) CreateUser(user *auth.User) (string, error) {
+	pass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", errors.New("Password Encryption Failed")
+	}
+	user.Password = string(pass)
+	token, err := user.CreateAPIToken()
+	if err != nil {
+		return "", errors.New("Token Creation Failed")
+	}
+	user.Token = token
+	createdUser := s.Db.Create(user)
+	if createdUser.Error != nil {
+		return "", createdUser.Error
+	}
+	return token, err
+}
+
+// GetUserFromToken looksup the store to fetch a user associate with the token
+func (s *Store) GetUserFromToken(token *auth.Token) (*auth.User, error) {
+	user := &auth.User{}
+	err := s.Db.Where("Email = ? AND Name = ?", token.Email, token.Name).First(user).Error
+	return user, err
 }
