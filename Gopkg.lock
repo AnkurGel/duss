@@ -226,14 +226,6 @@
   version = "v1.4.0"
 
 [[projects]]
-  digest = "1:1d7e1867c49a6dd9856598ef7c3123604ea3daabf5b83f303ff457bcbc410b1d"
-  name = "github.com/pkg/errors"
-  packages = ["."]
-  pruneopts = ""
-  revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
-  version = "v0.8.1"
-
-[[projects]]
   digest = "1:496fff31a7adae9f66d9551c6fc541befe78dfb3181da68e818e705543008df0"
   name = "github.com/rogpeppe/go-internal"
   packages = [
@@ -319,6 +311,8 @@
   packages = [
     "acme",
     "acme/autocert",
+    "bcrypt",
+    "blowfish",
     "ssh/terminal",
   ]
   pruneopts = ""
@@ -389,6 +383,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/dgrijalva/jwt-go",
     "github.com/go-sql-driver/mysql",
     "github.com/gobuffalo/packr/v2",
     "github.com/goware/urlx",
@@ -396,9 +391,9 @@
     "github.com/labstack/echo",
     "github.com/labstack/echo/middleware",
     "github.com/lytics/base62",
-    "github.com/pkg/errors",
     "github.com/sirupsen/logrus",
     "github.com/spf13/viper",
+    "golang.org/x/crypto/bcrypt",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
