@@ -1,10 +1,10 @@
 package server
 
 import (
-	"github.com/labstack/echo"
 	"github.com/ankurgel/duss/internal/duss/models/auth"
-	"strings"
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/labstack/echo"
+	"strings"
 )
 
 // AuthenticateUser is a middleware to authenticate user

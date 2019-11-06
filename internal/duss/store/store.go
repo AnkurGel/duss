@@ -2,11 +2,11 @@
 package store
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 	"github.com/ankurgel/duss/internal/duss/algo"
-	"github.com/ankurgel/duss/internal/duss/models/url"
 	"github.com/ankurgel/duss/internal/duss/models/auth"
+	"github.com/ankurgel/duss/internal/duss/models/url"
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
