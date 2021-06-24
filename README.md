@@ -1,3 +1,6 @@
+_This project has been archived in favor of [`reducto`](https://github.com/AnkurGel/reducto)._
+
+
 A URL shortener written in GoLang. Works with any SQL variant.   
 Supports configuration of key length, url normalization, collisions handling etc 
 
