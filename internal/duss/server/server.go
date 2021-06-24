@@ -6,12 +6,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/ankurgel/duss/internal/duss/algo"
+	"github.com/ankurgel/duss/internal/duss/models/auth"
 	"github.com/ankurgel/duss/internal/duss/models/url"
 	"github.com/ankurgel/duss/internal/duss/store"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"net/http"
 	"time"
 )
@@ -27,6 +28,13 @@ type Handler struct {
 
 // SetHandlers defines the routes and verb allowed in application
 func (h *Handler) SetHandlers() {
+	h.Router.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+		Claims:     &auth.Token{},
+		SigningKey: []byte(viper.GetString("JwtSecret")),
+		Skipper: skipTokenAuth,
+	}))
+
+	h.Router.Use(h.AuthenticateUser)
 	h.Router.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "DUSS ka dum!")
 	})
@@ -37,6 +45,13 @@ func (h *Handler) SetHandlers() {
 
 	h.Router.POST("/shorten", func(c echo.Context) error {
 		return cutShort(h, c)
+	})
+
+	adminGroup := h.Router.Group("/admin")
+	adminGroup.Use(h.VerifyAdmin)
+	
+	adminGroup.POST("/admin/user/new", func(c echo.Context) error {
+		return createNewUser(h, c)
 	})
 }
 
@@ -62,7 +77,7 @@ func cutShort(h *Handler, c echo.Context) error {
 
 // getLongURL responds with original long URL redirect for a given short slug
 func getLongURL(h *Handler, c echo.Context) error {
-	shortURL := c.Param("shortURL")
+	shortURL := c.Param("shortUrl")
 	var u *url.URL
 	var e error
 	if u, e = h.Store.FindByShortURL(shortURL); e != nil {
@@ -70,6 +85,23 @@ func getLongURL(h *Handler, c echo.Context) error {
 		return c.String(http.StatusNotFound, "Invalid Link")
 	}
 	return c.Redirect(http.StatusMovedPermanently, u.Original)
+}
+
+
+func createNewUser(h *Handler, c echo.Context) error {
+	newUser := &auth.User{}
+	newUser.Email = c.FormValue("email_id")
+	newUser.Password = c.FormValue("password")
+	newUser.Name = c.FormValue("name")
+	var token string
+	var e error
+	if token, e = h.Store.CreateUser(newUser); e != nil {
+		log.Error(fmt.Sprintf("Error in Create user for %s: %s", newUser.Email, e))
+		return c.String(http.StatusNotFound, "Invalid Link")
+	}
+	newUser.Password = ""
+	newUser.Token = token
+	return c.JSON(http.StatusCreated, newUser)
 }
 
 

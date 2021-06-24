@@ -11,3 +11,4 @@ Mysql:
 BlockedHosts:
   "google.com"
 MaxCollisionsAllowed: 5
+JwtSecret: 'dripcapital'
